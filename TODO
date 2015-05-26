@@ -1,14 +1,24 @@
-	 May 24-2015
+	 May 26-2015
 	-===========-
 
 -Rewrite grass drawing routine: probably want to have the entire set of 
 	grass drawn to one SDL_Surface, so we're not generating everything 
 	at once?
 	
--Finish the screenBlackAnim() code
-				-Works! But we need to ensure it doesn't get 
-					called multiple times due to the way the keyboard
-					is handled.
+-work on input- possibly rewrite input class to explore slightly 
+different ways of working with it.
+			-consider mouse handling, might be important when it comes 
+			to in game menus and such
+			
+		-rework movement, use the velocity (this will work better with
+			collisions with obstacles)
+
+-look into proper speed management (some ideas covered in this:
+				http://www.sdltutorials.com/sdl-collision)
+				
+-SDL_collide was added in, but it's not 100% functional yet, the pixel 
+	perfect detection seems to be having some issues with the transparency
+
 
 -integrate & update map system from prior version
 		-grass layer is now redundant
@@ -18,4 +28,4 @@
 							-static sprites (rocks, houses, etc...)
 							-dynamic sprites (NPCs, items, etc)
 
--once maps & additional sprites are considered, work on COLLISION detection
+

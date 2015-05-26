@@ -5,6 +5,14 @@
 #include <SDL_ttf.h>
 #include <vector>
 
+#define SPRITE_WIDTH   32
+#define SPRITE_HEIGHT  32
+//34x52
+
+#define SCREEN_WIDTH  640 // 20 * 32
+#define SCREEN_HEIGHT 480 // 15 * 32
+
+
 #define PLAYER_UP		1
 #define PLAYER_DOWN		0
 #define PLAYER_LEFT		2

@@ -7,20 +7,11 @@
 
 
 #include "SDLGraphics.h"
+#include "SDL_collide.h"
 #include "Input.h"
 #include "Timer.h"
 #include "gameobjs.h"
 #include "mapobjs.h"
-
-
-
-
-#define SPRITE_WIDTH   32
-#define SPRITE_HEIGHT  32
-//34x52
-
-#define SCREEN_WIDTH  640 // 20 * 32
-#define SCREEN_HEIGHT 480 // 15 * 32
 
 
 //function prototypes
@@ -28,6 +19,8 @@ void handleKeyboardInput();
 void gameloop(int randTiles[]);
 void drawGrass(int randTiles[]);
 void screenBlackAnim();
+void drawOverlay();
+
 
 //global vars
 bool gameIsRunning = true;
@@ -35,6 +28,9 @@ SDLGraphics *game_graphics = NULL;
 Input* game_input = NULL;
 Timer* game_timer = NULL;
 
+std::vector <Coords> rockLocations;
+
+bool runOnce = false;
 
 Player p1;
 
@@ -52,6 +48,7 @@ int main()
 	//There's got to be a better way to do this (generating random tiles for the grass)...
 	//This is probably a better idea: generate the entire backdrop as an SDL_Surface that can be drawn 
 	//														each time it is needed?
+
 	int randTiles[(SCREEN_HEIGHT / 32) * (SCREEN_WIDTH / 32)];
 	int i = 0;
 	for (i = 0; i < (SCREEN_HEIGHT / 32) * (SCREEN_WIDTH / 32); i++)
@@ -59,8 +56,13 @@ int main()
 		randTiles[i] = rand() % 4;
 	}
 
+
+	
+	setupTiles();
+
 	gameloop(randTiles);
 
+	screenBlackAnim();
 
 	delete game_timer;
 	delete game_input;
@@ -102,12 +104,27 @@ void gameloop(int randTiles[])
 		{
 			frame = 0.0;
 		}
+		
 
 		game_graphics->beginScene();
 		drawGrass(randTiles);
+		if (runOnce == true)
+		{
+			for (int rockCount = 0; rockCount < rockLocations.size(); rockCount++)
+			{
+				if(SDL_CollidePixel(playerMask, p1.getX(), p1.getY(), rockTile, rockLocations.at(rockCount).getX() * 32, rockLocations.at(rockCount).getY() * 32))
+				{
+						game_graphics->drawText("Collide!", 12, 250, 100, 200, 0, 0, 0, 0, 0);
+				}
+			}
+		}
+
+
+		drawOverlay();
+		printf("x: %d y: %d\n", rockLocations.at(0).getX(), rockLocations.at(0).getY());
 		game_graphics->drawSprite(p1.playerBMP, (int)frame * 32, dir, p1.getX(), p1.getY(), 32, 32);
 		
-	    //game_graphics->drawText("This tutorial rules!", 12, 250, 100, 200, 0, 0, 0, 0, 0);
+	    
 		game_graphics->endScene();
 
 		// Give the computer a break (optional)
@@ -140,11 +157,15 @@ void screenBlackAnim()
 	
 	int tileCount = 0;
 	
-	std::vector <Coords> screenTiles((SCREEN_WIDTH / 32) * (SCREEN_HEIGHT / 32));
+	//std::vector <Coords> screenTiles((SCREEN_WIDTH / 32) * (SCREEN_HEIGHT / 32));
+	std::vector <Coords> screenTiles((SCREEN_WIDTH / 8) * (SCREEN_HEIGHT / 8));
 
-	for (int x = 0; x < SCREEN_WIDTH/SPRITE_WIDTH; x++) 
+
+	//for (int x = 0; x < SCREEN_WIDTH/SPRITE_WIDTH; x++)
+	for (int x = 0; x < SCREEN_WIDTH/8; x++) 
 	{
-		for (int y = 0; y < SCREEN_HEIGHT/SPRITE_HEIGHT; y++) 
+		//for (int y = 0; y < SCREEN_HEIGHT/SPRITE_HEIGHT; y++)
+		for (int y = 0; y < SCREEN_HEIGHT/8; y++) 
 		{
 			screenTiles.at(tileCount).setX(x);
 			screenTiles.at(tileCount).setY(y);
@@ -152,24 +173,57 @@ void screenBlackAnim()
 		}
 	}
 
-
-	
-	//for (int count = 0; count < screenTiles.size(); count++)
-	//{
-	//	printf("X: %d    Y: %d\n", screenTiles.at(count).getX(), screenTiles.at(count).getY());
-	//}
 	std::random_shuffle(screenTiles.begin(), screenTiles.end());
-
 	
 	for (int count = 0; count < screenTiles.size(); count++)
 	{
-			game_graphics->drawSprite(blackTile, 0, 0, screenTiles.at(count).getX() * 32, screenTiles.at(count).getY() * 32, 32, 32);
+			//game_graphics->drawSprite(blackTile, 0, 0, screenTiles.at(count).getX() * 32, screenTiles.at(count).getY() * 32, 32, 32);
+			game_graphics->drawSprite(blackTile, 0, 0, screenTiles.at(count).getX() * 8, screenTiles.at(count).getY() * 8, 8, 8);
 			game_graphics->endScene();
-			SDL_Delay(2);
+			//SDL_Delay(2);
 	}
 	game_graphics->endScene();
-	SDL_Delay(1000);
+	SDL_Delay(500);
 	
+}
+
+void drawOverlay()
+{
+	
+	int mapPlace = 0;
+
+	Coords tempCoords;
+	
+	for (int y = 0; y < SCREEN_HEIGHT/SPRITE_HEIGHT; y++) 
+	{
+		for (int x = 0; x < SCREEN_WIDTH/SPRITE_WIDTH; x++) 
+		{
+			if (overlayMap01[mapPlace] == 1)
+			{
+				game_graphics->drawSprite(rockTile, 0, 0, x * 32, y * 32, 32, 32);
+				if (runOnce == false)
+				{
+					
+					printf("2. rock at x: %d y: %d\n", x, y);
+					tempCoords.setX(x);
+					tempCoords.setY(y);
+					rockLocations.push_back(tempCoords);
+				}
+			}
+			else if (overlayMap01 == 0)
+			{}
+			mapPlace++;
+		}
+	}	
+	if (runOnce == false)
+	{
+		runOnce = true;
+		printf("No. rocks: %d\n", rockLocations.size());
+		for (int x = 0; x < rockLocations.size(); x++)
+		{
+			printf("Rock X: %d   Y: %d\n", rockLocations.at(x).getX(), rockLocations.at(x).getY());
+		}
+	}
 }
 
 void handleKeyboardInput()
