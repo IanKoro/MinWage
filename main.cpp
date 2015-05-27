@@ -13,6 +13,7 @@
 #include "gameobjs.h"
 #include "mapobjs.h"
 
+#include "maps.h"
 
 //function prototypes
 void handleKeyboardInput();
@@ -20,7 +21,10 @@ void gameloop(int randTiles[]);
 void drawGrass(int randTiles[]);
 void screenBlackAnim();
 void drawOverlay();
+void showXY();
+void mapChange(int chx, int chy);
 
+int collideRockTest(int chX, int chY);
 
 //global vars
 bool gameIsRunning = true;
@@ -108,22 +112,11 @@ void gameloop(int randTiles[])
 
 		game_graphics->beginScene();
 		drawGrass(randTiles);
-		if (runOnce == true)
-		{
-			for (int rockCount = 0; rockCount < rockLocations.size(); rockCount++)
-			{
-				if(SDL_CollidePixel(playerMask, p1.getX(), p1.getY(), rockTile, rockLocations.at(rockCount).getX() * 32, rockLocations.at(rockCount).getY() * 32))
-				{
-						game_graphics->drawText("Collide!", 12, 250, 100, 200, 0, 0, 0, 0, 0);
-				}
-			}
-		}
-
 
 		drawOverlay();
-		printf("x: %d y: %d\n", rockLocations.at(0).getX(), rockLocations.at(0).getY());
+		//printf("x: %d y: %d\n", rockLocations.at(0).getX(), rockLocations.at(0).getY());
 		game_graphics->drawSprite(p1.playerBMP, (int)frame * 32, dir, p1.getX(), p1.getY(), 32, 32);
-		
+		showXY();
 	    
 		game_graphics->endScene();
 
@@ -177,13 +170,16 @@ void screenBlackAnim()
 	
 	for (int count = 0; count < screenTiles.size(); count++)
 	{
-			//game_graphics->drawSprite(blackTile, 0, 0, screenTiles.at(count).getX() * 32, screenTiles.at(count).getY() * 32, 32, 32);
 			game_graphics->drawSprite(blackTile, 0, 0, screenTiles.at(count).getX() * 8, screenTiles.at(count).getY() * 8, 8, 8);
+			count++;
+			game_graphics->drawSprite(blackTile, 0, 0, screenTiles.at(count).getX() * 8, screenTiles.at(count).getY() * 8, 8, 8);
+			count++;
+			game_graphics->drawSprite(blackTile, 0, 0, screenTiles.at(count).getX() * 8, screenTiles.at(count).getY() * 8, 8, 8);			
 			game_graphics->endScene();
 			//SDL_Delay(2);
 	}
 	game_graphics->endScene();
-	SDL_Delay(500);
+	//SDL_Delay(500);
 	
 }
 
@@ -198,7 +194,7 @@ void drawOverlay()
 	{
 		for (int x = 0; x < SCREEN_WIDTH/SPRITE_WIDTH; x++) 
 		{
-			if (overlayMap01[mapPlace] == 1)
+			if (gameMaps[p1.getMapX()][p1.getMapY()][mapPlace] == 1)
 			{
 				game_graphics->drawSprite(rockTile, 0, 0, x * 32, y * 32, 32, 32);
 				if (runOnce == false)
@@ -217,6 +213,9 @@ void drawOverlay()
 	}	
 	if (runOnce == false)
 	{
+
+		
+		
 		runOnce = true;
 		printf("No. rocks: %d\n", rockLocations.size());
 		for (int x = 0; x < rockLocations.size(); x++)
@@ -237,27 +236,73 @@ void handleKeyboardInput()
 
    if (keysHeld[SDLK_LEFT])
    {
-      p1.changeX(-1);
-      p1.startWalk(); 
+	  if (!collideRockTest(-1, 0))
+      {
+		if (  ((p1.getX() - 1) < 0) && (p1.getMapX() > 0))
+		{
+			mapChange(-1, 0);
+		}
+		else
+		{
+			p1.changeX(-1);
+			p1.startWalk();
+		} 
+	  }
       p1.setDir(PLAYER_LEFT);
     }
 	else if (keysHeld[SDLK_RIGHT])
 	{
-      p1.changeX(1);
-      p1.startWalk(); 
+      if (!collideRockTest(1, 0))
+      {
+		if (((p1.getX() + 1) > (SCREEN_WIDTH - SPRITE_WIDTH)) && (p1.getMapX() < 1)) //1 is the max map num
+		{
+			mapChange(1, 0);
+		}
+		else
+		{
+
+			p1.changeX(1);
+			p1.startWalk(); 
+		}
+      }
       p1.setDir(PLAYER_RIGHT);
 	}
 	
 	if (keysHeld[SDLK_UP])
 	{
-      p1.changeY(-1);
-      p1.startWalk(); 
+
+      if (!collideRockTest(0, -1))
+      {
+		  
+		if (((p1.getY() - 1) < 0) && (p1.getMapY() > 0))
+		{
+			mapChange(0, -1);
+		}
+		else
+		{
+
+			p1.changeY(-1);
+			p1.startWalk(); 
+		}
+	  }
       p1.setDir(PLAYER_UP);
 	}
 	else if (keysHeld[SDLK_DOWN])
 	{
-      p1.changeY(1);
-      p1.startWalk();
+	  if (!collideRockTest(0, 1))
+      {
+		if (((p1.getY() + 1) > (SCREEN_HEIGHT - SPRITE_HEIGHT)) && (p1.getMapY() < 1))
+		{
+			mapChange(0,1);
+
+		}
+		else
+		{
+
+			p1.changeY(1);
+			p1.startWalk();
+		}
+	  }
       p1.setDir(PLAYER_DOWN); 
 	}
 
@@ -272,3 +317,68 @@ void handleKeyboardInput()
 	}
 }
 
+void showXY()
+{
+		char xcor[10];
+		char ycor[10];
+		printf("t1\n");
+		sprintf(xcor, "x: %d", p1.getX());
+		sprintf(ycor, "y: %d", p1.getY());
+		printf("t2\n");
+		game_graphics->drawText(xcor, 12, 500, 300, 200, 0, 0, 0, 0, 0);
+		game_graphics->drawText(ycor, 12, 500, 320, 200, 0, 0, 0, 0, 0);
+}
+
+int collideRockTest(int chX, int chY)
+{
+		int retVal = 0;
+		if (runOnce == true)
+		{
+			for (int rockCount = 0; rockCount < rockLocations.size(); rockCount++)
+			{
+				if(SDL_CollidePixel(playerMask, p1.getX() + chX, p1.getY() + chY, rockTile, rockLocations.at(rockCount).getX() * 32, rockLocations.at(rockCount).getY() * 32))
+				{
+						//game_graphics->drawText("Collide!", 12, 250, 100, 200, 0, 0, 0, 0, 0);
+						retVal = 1;
+				}
+			}
+		}
+	
+		return retVal;
+}
+
+
+//resets things for map change, one map at a time
+//ie mapChange(0,1) -> adds 1 to y OR mapChange(-1,0) -> adds 1 to y
+//the change can be done in leaps greater than one map screen
+//...but probably not needed
+void mapChange(int chx, int chy)
+{
+	if (chx == 0)
+	{
+		if (chy > 0)
+			{
+				p1.setY(0);
+				
+			}
+		else if (chy < 0)
+			{
+				p1.setY(SCREEN_HEIGHT - SPRITE_HEIGHT);
+			}
+		p1.changeMapY(chy);
+	}
+	else if (chy == 0)
+	{
+		if (chx > 0)
+			{
+				p1.setX(0);
+			}
+		else if (chx < 0)
+			{
+				p1.setX(SCREEN_WIDTH - SPRITE_WIDTH);
+			}
+		p1.changeMapX(chx);		
+	}
+	runOnce = false;
+	rockLocations.clear();
+}

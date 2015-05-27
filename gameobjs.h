@@ -39,6 +39,15 @@ class Player
 
 		void changeX(int xch) {x += xch;}
 		void changeY(int ych) {y += ych;}
+
+		void setMapX(int xval) {mapX = xval;}
+		void setMapY(int yval) {mapY = yval;}
+		
+		int getMapX() {return mapX;}
+		int getMapY() {return mapY;}
+
+		void changeMapX(int xch) {mapX += xch;}
+		void changeMapY(int ych) {mapY += ych;}
 		
 		SDL_Surface* playerBMP;
 		
@@ -63,6 +72,9 @@ class Player
 		int y;
 		int xvel;
 		int yvel;
+		
+		int mapX;
+		int mapY;
 		
 		int direction; //0-down 1-up 2-left 3-right
 		

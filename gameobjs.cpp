@@ -22,6 +22,8 @@ Player::Player()
 	
 	xvel = yvel = 0;
 	
+	mapX = mapY = 0;
+	
 	x = y = 10;
 	
 	walking = false;

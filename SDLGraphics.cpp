@@ -106,3 +106,23 @@ void SDLGraphics::setBackgroundColor(int r, int g, int b)
    m_backgroundColorGreen = g;
    m_backgroundColorBlue = b;
 }
+
+SDL_Surface* BetterLoadBMP(const char* filename)
+{
+	printf("b1...\n");
+	SDL_Surface* loaded = SDL_LoadBMP(filename);
+	SDL_Surface* optimal = NULL;
+	printf("b2...\n");
+	if (loaded)
+	{
+		printf("b3...\n");
+		SDL_SetColorKey(loaded, SDL_RLEACCEL|SDL_SRCCOLORKEY,
+			SDL_MapRGB(loaded->format, 255, 0, 255));
+		printf("b4...\n");
+		optimal = SDL_DisplayFormat(loaded);
+			printf("b5...\n");
+		SDL_FreeSurface(loaded);
+			printf("b6...\n");
+	}
+	return optimal;
+}

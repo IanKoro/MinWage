@@ -1,4 +1,4 @@
-	 May 26-2015
+	 May 27-2015
 	-===========-
 
 -Rewrite grass drawing routine: probably want to have the entire set of 
@@ -9,23 +9,28 @@
 different ways of working with it.
 			-consider mouse handling, might be important when it comes 
 			to in game menus and such
+
+Game states:
+		-the usual pause, play, menu states
+		-also states for the insides of buildings and various in-game
+			menus
 			
-		-rework movement, use the velocity (this will work better with
-			collisions with obstacles)
+		-also, organizing the game state into a file for saving games
 
--look into proper speed management (some ideas covered in this:
+Movement:
+		-look into proper speed management (some ideas covered in this:
 				http://www.sdltutorials.com/sdl-collision)
+		-rocks as obstacles now basically work, may need to be altered,
+		current collision checking is potentially going to be too 
+		rigorous once things get more complex.
 				
--SDL_collide was added in, but it's not 100% functional yet, the pixel 
-	perfect detection seems to be having some issues with the transparency
 
-
--integrate & update map system from prior version
-		-grass layer is now redundant
-		-two (or three?) layers:
+-Maps are now integrated, so to expand it is time to create both art
+	assets, and design classes for:
 				-backdrop items (roads, etc...)
 				-sprite layers:
-							-static sprites (rocks, houses, etc...)
-							-dynamic sprites (NPCs, items, etc)
+						-static sprites (rocks, houses, etc...)
+						-dynamic sprites (NPCs, items, etc)
 
-
+-change all graphics to PNG rather than BMP, but continue to expand
+		artwork. Enlarge the grass tiles for a better appearance.

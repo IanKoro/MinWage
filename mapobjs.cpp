@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_image.h>
 #include <vector>
 
 #include "SDLGraphics.h"
@@ -11,10 +12,16 @@ SDL_Surface* grassTiles = SDL_LoadBMP("images/grassALL.bmp");
 
 SDL_Surface*  blackTile = SDL_LoadBMP("images/black.bmp");
 
-SDL_Surface*  rockTile = SDL_LoadBMP("images/rock.bmp");
+//SDL_Surface*  rockTile = SDL_LoadBMP("images/rock.bmp");
+SDL_Surface*  rockTile = IMG_Load("images/rock.bmp");
 
-SDL_Surface*  playerMask = SDL_LoadBMP("images/pmask.bmp");
+//SDL_Surface*  playerMask = SDL_LoadBMP("images/pmask.bmp");
 
+SDL_Surface*  playerMask = IMG_Load("images/pmask.png");
+
+//SDL_Surface*  playerMask = NULL;
+//SDL_Surface*  rockTile = NULL;
+/***********
 
 int overlayMap01[300] = 
   { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
@@ -23,11 +30,11 @@ int overlayMap01[300] =
 	00, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
     00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
     00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-	00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-    00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-    00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+	00, 00, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+    00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+    00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00,
    	00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-    00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+    00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 01, 01, 01, 00, 00, 00, 00, 00,
     00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
 	00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
     00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
@@ -50,7 +57,7 @@ int tiledMapBlank[300] =
     00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
     00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 };
 
-
+*************/
 
 void setupTiles()
 {
@@ -63,6 +70,8 @@ void setupTiles()
 	SDL_SetColorKey(rockTile,
                    SDL_SRCCOLORKEY,
                    SDL_MapRGB(rockTile->format, 255, 0, 255));
-                   
-    
-};
+
+ 
+ //playerMask = BetterLoadBMP("images/pmask.bmp");
+ //rockTile = BetterLoadBMP("images/rock.bmp");
+}

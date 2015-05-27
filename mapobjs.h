@@ -11,7 +11,7 @@ extern SDL_Surface* playerMask;
 void setupTiles();
 
 
-extern int overlayMap01[300];
+//extern int overlayMap01[300];
 
 extern int tiledMapBlank[300];
     

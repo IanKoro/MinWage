@@ -49,4 +49,7 @@ private:
    int m_backgroundColorBlue;
 };
 
+
+SDL_Surface* BetterLoadBMP(const char* filename);
+
 #endif
