@@ -24,7 +24,10 @@ Movement:
 		current collision checking is potentially going to be too 
 		rigorous once things get more complex.
 				
-
+Sprites:
+	-possibly create classes for the individual map items? Different
+	size map items now functional.
+	
 -Maps are now integrated, so to expand it is time to create both art
 	assets, and design classes for:
 				-backdrop items (roads, etc...)
@@ -34,3 +37,4 @@ Movement:
 
 -change all graphics to PNG rather than BMP, but continue to expand
 		artwork. Enlarge the grass tiles for a better appearance.
+		

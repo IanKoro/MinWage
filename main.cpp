@@ -121,7 +121,7 @@ void gameloop(int randTiles[])
 		game_graphics->endScene();
 
 		// Give the computer a break (optional)
-		SDL_Delay(10);
+		//SDL_Delay(10);
 		
 	}
 }
@@ -188,21 +188,25 @@ void drawOverlay()
 	
 	int mapPlace = 0;
 
-	Coords tempCoords;
+	Coords tempCoords, holdDimensions;
+
 	
 	for (int y = 0; y < SCREEN_HEIGHT/SPRITE_HEIGHT; y++) 
 	{
 		for (int x = 0; x < SCREEN_WIDTH/SPRITE_WIDTH; x++) 
 		{
-			if (gameMaps[p1.getMapX()][p1.getMapY()][mapPlace] == 1)
+			if (gameMaps[p1.getMapX()][p1.getMapY()][mapPlace] != 0)
 			{
-				game_graphics->drawSprite(rockTile, 0, 0, x * 32, y * 32, 32, 32);
+				//game_graphics->drawSprite(getObjSurface(gameMaps[p1.getMapX()][p1.getMapY()][mapPlace]), 0, 0, x * 32, y * 32, 32, 32);
+				holdDimensions = getObjDimensions(gameMaps[p1.getMapX()][p1.getMapY()][mapPlace]);
+				game_graphics->drawSprite(getObjSurface(gameMaps[p1.getMapX()][p1.getMapY()][mapPlace]), 0, 0, x * 32, y * 32, holdDimensions.getX(), holdDimensions.getY());
 				if (runOnce == false)
 				{
 					
 					printf("2. rock at x: %d y: %d\n", x, y);
 					tempCoords.setX(x);
 					tempCoords.setY(y);
+					tempCoords.setObjType(gameMaps[p1.getMapX()][p1.getMapY()][mapPlace]);
 					rockLocations.push_back(tempCoords);
 				}
 			}
@@ -238,9 +242,12 @@ void handleKeyboardInput()
    {
 	  if (!collideRockTest(-1, 0))
       {
-		if (  ((p1.getX() - 1) < 0) && (p1.getMapX() > 0))
+		if (  (p1.getX() - 1) < 0)
 		{
-			mapChange(-1, 0);
+			if ((p1.getMapX() > 0))
+			{
+				mapChange(-1, 0);
+			}
 		}
 		else
 		{
@@ -254,9 +261,12 @@ void handleKeyboardInput()
 	{
       if (!collideRockTest(1, 0))
       {
-		if (((p1.getX() + 1) > (SCREEN_WIDTH - SPRITE_WIDTH)) && (p1.getMapX() < 1)) //1 is the max map num
+		if ((p1.getX() + 1) > (SCREEN_WIDTH - SPRITE_WIDTH)) //1 is the max map num
 		{
-			mapChange(1, 0);
+			if ((p1.getMapX() < 1))
+			{
+				mapChange(1, 0);
+			}
 		}
 		else
 		{
@@ -274,9 +284,13 @@ void handleKeyboardInput()
       if (!collideRockTest(0, -1))
       {
 		  
-		if (((p1.getY() - 1) < 0) && (p1.getMapY() > 0))
+		if ((p1.getY() - 1) < 0)
 		{
-			mapChange(0, -1);
+			if (p1.getMapY() > 0)
+			{
+				mapChange(0, -1);
+			}
+			
 		}
 		else
 		{
@@ -291,9 +305,12 @@ void handleKeyboardInput()
 	{
 	  if (!collideRockTest(0, 1))
       {
-		if (((p1.getY() + 1) > (SCREEN_HEIGHT - SPRITE_HEIGHT)) && (p1.getMapY() < 1))
+		if ((p1.getY() + 1) > (SCREEN_HEIGHT - SPRITE_HEIGHT)) 
 		{
-			mapChange(0,1);
+			if ((p1.getMapY() < 1))
+			{
+				mapChange(0,1);
+			}
 
 		}
 		else
@@ -329,6 +346,7 @@ void showXY()
 		game_graphics->drawText(ycor, 12, 500, 320, 200, 0, 0, 0, 0, 0);
 }
 
+//goes through each rock on the screen, checking for player collisions
 int collideRockTest(int chX, int chY)
 {
 		int retVal = 0;
@@ -336,9 +354,9 @@ int collideRockTest(int chX, int chY)
 		{
 			for (int rockCount = 0; rockCount < rockLocations.size(); rockCount++)
 			{
-				if(SDL_CollidePixel(playerMask, p1.getX() + chX, p1.getY() + chY, rockTile, rockLocations.at(rockCount).getX() * 32, rockLocations.at(rockCount).getY() * 32))
+				//if(SDL_CollidePixel(playerMask, p1.getX() + chX, p1.getY() + chY, rockTile, rockLocations.at(rockCount).getX() * 32, rockLocations.at(rockCount).getY() * 32))
+				if(SDL_CollidePixel(playerMask, p1.getX() + chX, p1.getY() + chY, getObjSurface(rockLocations.at(rockCount).getObjType()), rockLocations.at(rockCount).getX() * 32, rockLocations.at(rockCount).getY() * 32))
 				{
-						//game_graphics->drawText("Collide!", 12, 250, 100, 200, 0, 0, 0, 0, 0);
 						retVal = 1;
 				}
 			}

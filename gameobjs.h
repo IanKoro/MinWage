@@ -18,6 +18,9 @@
 #define PLAYER_LEFT		2
 #define PLAYER_RIGHT	3
 
+SDL_Surface* getObjSurface(int objType);
+
+
 class Player
 {
 	public:
@@ -92,9 +95,19 @@ class Coords
 		int getX() {return x;}
 		int getY() {return y;}
 		
+		void setObjType(int objVal) {objType = objVal;}
+		int getObjType() {return objType;}
+		
+
+		
 	private:
 		int x;
 		int y;
+		
+		int objType;
 };
+
+
+Coords getObjDimensions(int objType);
 
 #endif

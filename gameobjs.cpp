@@ -4,6 +4,7 @@
 
 #include "SDLGraphics.h"
 #include "gameobjs.h"
+#include "mapobjs.h"
 
 
 Player::Player()
@@ -33,4 +34,48 @@ Player::Player()
 Player::~Player()
 {
 	SDL_FreeSurface(playerBMP);
+}
+
+SDL_Surface* getObjSurface(int objType)
+{
+		if (objType == 0)
+		{
+			return NULL;
+		}
+		else if (objType == 01)
+		{
+			return rockTile;
+		}
+		else if (objType == 02)
+		{
+			return bigRockTile;
+		}
+		else if (objType == 03)
+		{
+			return barBldg;
+		}
+
+		
+}
+
+Coords getObjDimensions(int objType)
+{
+		Coords retCoords;
+		
+		if (objType == 0)
+		{
+			retCoords.setX(0);
+			retCoords.setY(0);
+		}
+		else if (objType == 01 || objType == 02)
+		{
+			retCoords.setX(32);
+			retCoords.setY(32);
+		}
+		else if (objType == 03) //bar obj, 3x2 tiles
+		{
+			retCoords.setX(32 * 3);
+			retCoords.setY(32 * 2);
+		}	
+		return retCoords;
 }
