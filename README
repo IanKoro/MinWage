@@ -15,6 +15,22 @@ continually expanding, and will soon be something interesting to play.
 	This game will have some elements of both RPG and adventure games,
 and a mixture of other features.
 
+Compiling & running:
+	-Just type 'make' to compile
+	-Then type './minwage' to run
+
+Playing:
+	There's no gameplay to speak of at this point, but the following
+	keys have some sort of testing functions:
+	
+			-Arrow keys
+			-Escape key
+			-'V' key
+			-'B' key
+			-'N' key
+			
+
+
 	Here are some ideas for things that will be a part of the
 gameplay:
 		

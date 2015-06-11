@@ -54,7 +54,35 @@ SDL_Surface* getObjSurface(int objType)
 		{
 			return barBldg;
 		}
+		else if (objType == 04)
+		{
+			return apartBldg;
+		}
+		
+}
 
+SDL_Surface* getObjSurfaceMasks(int objType)
+{
+		if (objType == 0)
+		{
+			return NULL;
+		}
+		else if (objType == 01)
+		{
+			return rockTile;
+		}
+		else if (objType == 02)
+		{
+			return bigRockTile;
+		}
+		else if (objType == 03)
+		{
+			return barBldg;
+		}
+		else if (objType == 04)
+		{
+			return apartBldgMask;
+		}
 		
 }
 
@@ -76,6 +104,11 @@ Coords getObjDimensions(int objType)
 		{
 			retCoords.setX(32 * 3);
 			retCoords.setY(32 * 2);
+		}
+		else if (objType == 04) //apartment obj 128x288 (4x9 tiles)
+		{
+			retCoords.setX(32 * 4);
+			retCoords.setY(32 * 9);
 		}	
 		return retCoords;
 }

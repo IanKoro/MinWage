@@ -14,8 +14,14 @@ public:
 
    // Call this before any other methods
    void readInput();
+   
+
 
    bool* getInput();
+   bool* getSlowInput();   
+   int menuInput();
+   
+
 
    // Check this each frame
    bool windowClosed();
@@ -23,7 +29,10 @@ public:
 // Data
 private:
    SDL_Event m_event;
+   SDL_Event m_slowevent;
+
    bool m_keysHeld[323];
+   bool m_keysHit[323];
    bool m_windowClosed;
 };
 

@@ -1,4 +1,4 @@
-	 May 27-2015
+   	June 11-2015
 	-===========-
 
 -Rewrite grass drawing routine: probably want to have the entire set of 
@@ -9,11 +9,13 @@
 different ways of working with it.
 			-consider mouse handling, might be important when it comes 
 			to in game menus and such
+			
+			-create input handling for indoors (could slightly modify 
+			current handling so it can be used for all input)
 
 Game states:
-		-the usual pause, play, menu states
-		-also states for the insides of buildings and various in-game
-			menus
+		-menu state/pause state essentially implemented
+		-indoor state is started, should be similar to a sort of menu
 			
 		-also, organizing the game state into a file for saving games
 
@@ -25,8 +27,14 @@ Movement:
 		rigorous once things get more complex.
 				
 Sprites:
+	-finish the overhead walking anim for indoors
+	-then find a way to rotate the sprite. Perhaps generate the images
+	for 8 (or just 4) directions, and then load them. Would be faster 
+	than implementing code that rotates the sprites
+
 	-possibly create classes for the individual map items? Different
 	size map items now functional.
+
 	
 -Maps are now integrated, so to expand it is time to create both art
 	assets, and design classes for:

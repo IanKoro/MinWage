@@ -20,6 +20,7 @@
 
 SDL_Surface* getObjSurface(int objType);
 
+SDL_Surface* getObjSurfaceMasks(int objType);
 
 class Player
 {

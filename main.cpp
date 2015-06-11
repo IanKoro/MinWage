@@ -12,19 +12,10 @@
 #include "Timer.h"
 #include "gameobjs.h"
 #include "mapobjs.h"
-
+#include "main.h"
+#include "menuclass.h"
+#include "indoors.h"
 #include "maps.h"
-
-//function prototypes
-void handleKeyboardInput();
-void gameloop(int randTiles[]);
-void drawGrass(int randTiles[]);
-void screenBlackAnim();
-void drawOverlay();
-void showXY();
-void mapChange(int chx, int chy);
-
-int collideRockTest(int chX, int chY);
 
 //global vars
 bool gameIsRunning = true;
@@ -32,7 +23,14 @@ SDLGraphics *game_graphics = NULL;
 Input* game_input = NULL;
 Timer* game_timer = NULL;
 
+menuClass *gameMenu = NULL;
+IndoorHandler *gameIndoors = NULL;
+
+bool inMenu = false;
+
+
 std::vector <Coords> rockLocations;
+
 
 bool runOnce = false;
 
@@ -47,7 +45,8 @@ int main()
 	game_timer = new Timer();
 	game_input = new Input();
 
-
+	gameMenu = new menuClass();
+	gameIndoors = new IndoorHandler();
 	
 	//There's got to be a better way to do this (generating random tiles for the grass)...
 	//This is probably a better idea: generate the entire backdrop as an SDL_Surface that can be drawn 
@@ -66,11 +65,7 @@ int main()
 
 	gameloop(randTiles);
 
-	screenBlackAnim();
-
-	delete game_timer;
-	delete game_input;
-	delete game_graphics;
+	exitGame();
 
 	return 0;
 }
@@ -116,9 +111,15 @@ void gameloop(int randTiles[])
 		drawOverlay();
 		//printf("x: %d y: %d\n", rockLocations.at(0).getX(), rockLocations.at(0).getY());
 		game_graphics->drawSprite(p1.playerBMP, (int)frame * 32, dir, p1.getX(), p1.getY(), 32, 32);
+
 		showXY();
 	    
 		game_graphics->endScene();
+
+		if (inMenu)
+		{
+			gameMenu->displayMenu();
+		}
 
 		// Give the computer a break (optional)
 		//SDL_Delay(10);
@@ -126,6 +127,15 @@ void gameloop(int randTiles[])
 	}
 }
 
+void exitGame()
+{
+	screenBlackAnim();
+
+	delete game_timer;
+	delete game_input;
+	delete game_graphics;	
+}
+	
 void drawGrass(int randTiles[])
 {
 
@@ -232,6 +242,8 @@ void drawOverlay()
 void handleKeyboardInput()
 {
    bool* keysHeld = game_input->getInput();
+   bool* keysHit = game_input->getSlowInput();
+   
 
    if (keysHeld[SDLK_ESCAPE])
    {
@@ -328,20 +340,34 @@ void handleKeyboardInput()
 		p1.stopWalk();
 	}
 	
-	if (keysHeld[SDLK_b])
+	if (keysHit[SDLK_b])  //'b' tests fade to black
 	{
 		screenBlackAnim();
+		keysHit[SDLK_b] = false;
 	}
+	if (keysHit[SDLK_v])	//'v' is menu test
+	{
+		inMenu = true;
+		keysHit[SDLK_v] = false;
+	}
+	if (keysHit[SDLK_n])	//'n' is indoors test
+	{
+		gameIndoors->drawRoomView();
+		keysHit[SDLK_n] = false;
+	}
+	
+
+
 }
 
 void showXY()
 {
 		char xcor[10];
 		char ycor[10];
-		printf("t1\n");
+		//printf("t1\n");
 		sprintf(xcor, "x: %d", p1.getX());
 		sprintf(ycor, "y: %d", p1.getY());
-		printf("t2\n");
+		//printf("t2\n");
 		game_graphics->drawText(xcor, 12, 500, 300, 200, 0, 0, 0, 0, 0);
 		game_graphics->drawText(ycor, 12, 500, 320, 200, 0, 0, 0, 0, 0);
 }
@@ -354,7 +380,7 @@ int collideRockTest(int chX, int chY)
 		{
 			for (int rockCount = 0; rockCount < rockLocations.size(); rockCount++)
 			{
-				//if(SDL_CollidePixel(playerMask, p1.getX() + chX, p1.getY() + chY, rockTile, rockLocations.at(rockCount).getX() * 32, rockLocations.at(rockCount).getY() * 32))
+				//if(SDL_CollidePixel(playerMask, p1.getX() + chX, p1.getY() + chY, getObjSurfaceMasks(rockLocations.at(rockCount).getObjType()), rockLocations.at(rockCount).getX() * 32, rockLocations.at(rockCount).getY() * 32))
 				if(SDL_CollidePixel(playerMask, p1.getX() + chX, p1.getY() + chY, getObjSurface(rockLocations.at(rockCount).getObjType()), rockLocations.at(rockCount).getX() * 32, rockLocations.at(rockCount).getY() * 32))
 				{
 						retVal = 1;
@@ -400,3 +426,5 @@ void mapChange(int chx, int chy)
 	runOnce = false;
 	rockLocations.clear();
 }
+
+

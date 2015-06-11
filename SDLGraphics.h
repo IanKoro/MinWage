@@ -40,6 +40,8 @@ public:
 
    void setBackgroundColor(int r, int g, int b);
 
+	SDL_Surface* returnScreen() {return m_screen;}
+
 // Data
 private:
    SDL_Surface* m_screen;
@@ -50,6 +52,5 @@ private:
 };
 
 
-SDL_Surface* BetterLoadBMP(const char* filename);
 
 #endif
