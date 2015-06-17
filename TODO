@@ -35,8 +35,14 @@ Sprites:
 	-possibly create classes for the individual map items? Different
 	size map items now functional.
 
+
+Indoors:
+	-map system is close to being done. Need to implement a system for 
+		indoor doorways (going between rooms), and outdoor ones
+		(for entering the indoors)
+	-create maps for locations
 	
--Maps are now integrated, so to expand it is time to create both art
+-outdoor maps are now functional, so to expand it is time to create both art
 	assets, and design classes for:
 				-backdrop items (roads, etc...)
 				-sprite layers:
@@ -45,4 +51,11 @@ Sprites:
 
 -change all graphics to PNG rather than BMP, but continue to expand
 		artwork. Enlarge the grass tiles for a better appearance.
+		
+LOCATIONS:
+		-home (apartment... with the possibility of up/downgrading?, a house, a cardboard box)
+		-bar
+		-jobs (fast food, telemarketing, etc...)
+		-groceries
+		-drug dealers
 		

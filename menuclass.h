@@ -21,6 +21,7 @@
 #define FLOORTILES_KITCHEN  		9
 #define FLOORTILES_PLAIN  			10
 #define FLOORTILES_PLAIN_SMALL  	11
+#define FLOORTILES_WOOD			  	12
 
 class menuItem
 {

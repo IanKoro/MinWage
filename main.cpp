@@ -1,6 +1,8 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_image.h>
+#include <SDL_events.h>
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
@@ -16,6 +18,8 @@
 #include "menuclass.h"
 #include "indoors.h"
 #include "maps.h"
+//#include "indoorMaps.h"
+
 
 //global vars
 bool gameIsRunning = true;
@@ -35,6 +39,7 @@ std::vector <Coords> rockLocations;
 bool runOnce = false;
 
 Player p1;
+IndoorPlayer playerAbove;
 
 int main()
 {
@@ -63,6 +68,8 @@ int main()
 	
 	setupTiles();
 
+	showTitle();
+
 	gameloop(randTiles);
 
 	exitGame();
@@ -74,6 +81,8 @@ void gameloop(int randTiles[])
 {
 	float frame = 0.0;
 	int dir = 0;
+	
+	game_input->clearKeys();
 	
 	while (gameIsRunning)
 	{
@@ -112,7 +121,7 @@ void gameloop(int randTiles[])
 		//printf("x: %d y: %d\n", rockLocations.at(0).getX(), rockLocations.at(0).getY());
 		game_graphics->drawSprite(p1.playerBMP, (int)frame * 32, dir, p1.getX(), p1.getY(), 32, 32);
 
-		showXY();
+		//showXY();
 	    
 		game_graphics->endScene();
 
@@ -213,7 +222,7 @@ void drawOverlay()
 				if (runOnce == false)
 				{
 					
-					printf("2. rock at x: %d y: %d\n", x, y);
+					//printf("2. rock at x: %d y: %d\n", x, y);
 					tempCoords.setX(x);
 					tempCoords.setY(y);
 					tempCoords.setObjType(gameMaps[p1.getMapX()][p1.getMapY()][mapPlace]);
@@ -231,11 +240,7 @@ void drawOverlay()
 		
 		
 		runOnce = true;
-		printf("No. rocks: %d\n", rockLocations.size());
-		for (int x = 0; x < rockLocations.size(); x++)
-		{
-			printf("Rock X: %d   Y: %d\n", rockLocations.at(x).getX(), rockLocations.at(x).getY());
-		}
+
 	}
 }
 
@@ -352,7 +357,7 @@ void handleKeyboardInput()
 	}
 	if (keysHit[SDLK_n])	//'n' is indoors test
 	{
-		gameIndoors->drawRoomView();
+		gameIndoors->goInside(1);
 		keysHit[SDLK_n] = false;
 	}
 	
@@ -427,4 +432,13 @@ void mapChange(int chx, int chy)
 	rockLocations.clear();
 }
 
+void showTitle()
+{
+	SDL_Surface *titleImage = IMG_Load("images/title.png");
+	game_graphics->drawSprite(titleImage, 0, 0, 0,0, 640, 480);
+	game_graphics->endScene();
+	SDL_Delay(1000);
+	game_input->clearKeys();
+	
+}
 

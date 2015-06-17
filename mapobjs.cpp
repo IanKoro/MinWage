@@ -24,7 +24,9 @@ SDL_Surface* barBldg = IMG_Load("images/bar.png");
 SDL_Surface* apartBldg = IMG_Load("images/building.png");
 SDL_Surface* apartBldgMask = IMG_Load("images/building_mask.png");
 
-SDL_Surface* tempOVERHEAD = IMG_Load("images/overhead1.png");
+
+SDL_Surface* indoorDesk = IMG_Load("images/desk.png");
+
 
 void setupTiles()
 {
@@ -56,10 +58,10 @@ void setupTiles()
                    SDL_MapRGB(apartBldgMask->format, 255, 0, 255));
 
 
-	SDL_SetColorKey(tempOVERHEAD,
-                   SDL_SRCCOLORKEY,
-                   SDL_MapRGB(tempOVERHEAD->format, 255, 0, 255));
 
- //playerMask = BetterLoadBMP("images/pmask.bmp");
- //rockTile = BetterLoadBMP("images/rock.bmp");
+	SDL_SetColorKey(indoorDesk,
+                   SDL_SRCCOLORKEY,
+                   SDL_MapRGB(indoorDesk->format, 255, 0, 255));
+
+
 }

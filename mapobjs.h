@@ -15,6 +15,7 @@ extern SDL_Surface* apartBldg;
 extern SDL_Surface* apartBldgMask;
 
 extern SDL_Surface* tempOVERHEAD;
+extern SDL_Surface* indoorDesk;
 
 void setupTiles();
 

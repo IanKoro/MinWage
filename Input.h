@@ -21,6 +21,7 @@ public:
    bool* getSlowInput();   
    int menuInput();
    
+   void clearKeys();
 
 
    // Check this each frame

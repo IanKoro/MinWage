@@ -7,6 +7,7 @@
 #include "Timer.h"
 #include "menuclass.h"
 #include "indoors.h"
+#include "indoorPlayer.h"
 //function prototypes
 
 void handleKeyboardInput();
@@ -19,6 +20,8 @@ void screenBlackAnim();
 void drawOverlay();
 void showXY();
 void mapChange(int chx, int chy);
+
+void showTitle();
 
 void pauseState();
 
@@ -34,6 +37,9 @@ extern Input* game_input;
 extern Timer* game_timer;
 extern menuClass *gameMenu;
 extern IndoorHandler *gameIndoors;
+
+extern IndoorPlayer playerAbove;
+
 
 extern 	bool inMenu;
 

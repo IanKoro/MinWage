@@ -11,7 +11,7 @@
 #include "SDLGraphics.h"
 #include "main.h"
 
-std::vector <SDL_Surface *> menuBorder(12);
+std::vector <SDL_Surface *> menuBorder(13);
 SDL_Surface* menuDot = IMG_Load("images/bluedot.png");
 
 menuItem::menuItem()
@@ -53,7 +53,7 @@ menuClass::menuClass()
 		menuBorder.at(9) = IMG_Load("images/floorTiles.png");
 		menuBorder.at(10) = IMG_Load("images/floorTiles2.png");
 		menuBorder.at(11) = IMG_Load("images/floorTiles3.png");
-				
+		menuBorder.at(12) = IMG_Load("images/floorTiles4.png");				
 		tempItem.caption = "Inventory";
 		tempItem.x_coord = 75;
 		tempItem.y_coord = 84;
@@ -288,7 +288,7 @@ void menuClass::drawBorder(int menuW, int menuH, int bgTile)
 	int menuXspace = ((SCREEN_WIDTH / 32) - menuW);
 	int menuYspace = ((SCREEN_HEIGHT / 32) - menuH);
 	
-	printf("Hello from the drawBorder function... is bgTile 0? It is: %d\n", bgTile);
+
 	
 	if (menuXspace % 2 == 0 && menuYspace % 2 == 0)
 	{

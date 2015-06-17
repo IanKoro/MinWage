@@ -92,7 +92,15 @@ int Input::menuInput()
 	inMenu = false;
 }
 
-
+void Input::clearKeys()
+{
+	int i = 0;
+	for (i = 0; i < 323; i++)
+	{
+		m_keysHeld[i] = false;
+		m_keysHit[i] = false;
+	}
+}
 
 
 bool Input::windowClosed()
