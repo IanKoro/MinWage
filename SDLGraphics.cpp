@@ -1,6 +1,8 @@
 // SDLGraphics.cpp
 
 #include "SDLGraphics.h"
+#include "main.h"
+#include "mapobjs.h"
 
 SDLGraphics::SDLGraphics(int windowWidth, int windowHeight,
                          const char* windowTitle,
@@ -83,8 +85,9 @@ void SDLGraphics::drawText(const char* string,
                            int fR, int fG, int fB,
                            int bR, int bG, int bB)
 {
-   TTF_Font* font = TTF_OpenFont("arial.ttf", size);
-
+	TTF_Font* font = TTF_OpenFont("fonts/Amatic-Bold.ttf", size);
+	
+	//else{font = TTF_OpenFont("fonts/arial.ttf", size);}
    SDL_Color foregroundColor = { fR, fG, fB };
    SDL_Color backgroundColor = { bR, bG, bB };
 
@@ -107,4 +110,52 @@ void SDLGraphics::setBackgroundColor(int r, int g, int b)
    m_backgroundColorBlue = b;
 }
 
+int drawSpiral(int numPts, int delayTime)
+{
+	
+	    // (dirX, dirY) is a vector - direction in which we move right now
+    int dirX = 1;
+    int dirY = 0;
+    // length of current segment
+    int segment_length = 1;
+
+    // current position (i, j) and how much of current segment we passed
+    int i = 10;
+    int j = 7;
+    
+    int k = 0;
+
+    game_graphics->drawSprite(blackTile, 0, 0, i * 32, j * 32, 32, 32);
+    game_graphics->endScene();
+    
+    int segment_passed = 0;
+    for (k = 0; k < numPts; ++k) {
+        // make a step, add 'direction' vector (dirX, dirY) to current position (i, j)
+        i += dirX;
+        j += dirY;
+        ++segment_passed;
+        SDL_Delay(delayTime);
+        game_graphics->drawSprite(blackTile, 0, 0, i * 32, j * 32, 32, 32);
+        game_graphics->endScene();
+        printf("%d %d\n", i, j);
+
+        if (segment_passed == segment_length) {
+            // done with current segment
+            segment_passed = 0;
+
+            // 'rotate' directions
+            int buffer = dirX;
+            dirX = -dirY;
+            dirY = buffer;
+
+            // increase segment length if necessary
+            if (dirY == 0) {
+                ++segment_length;
+            }
+        }
+    }
+	
+	return 0;
+	
+}
 

@@ -1,0 +1,511 @@
+#include <iostream>
+#include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_events.h>
+#include <vector>
+#include <cstdlib>
+#include <algorithm>
+
+
+#include "SDLGraphics.h"
+#include "SDL_collide.h"
+#include "Input.h"
+#include "Timer.h"
+#include "gameobjs.h"
+#include "mapobjs.h"
+#include "main.h"
+#include "menuclass.h"
+#include "indoors.h"
+#include "maps.h"
+#include "inventory.h"
+
+#include "makeMap.h"
+
+
+//#include "indoorMaps.h"
+
+
+//global vars
+bool gameIsRunning = true;
+SDLGraphics *game_graphics = NULL;
+Input* game_input = NULL;
+Timer* game_timer = NULL;
+
+menuClass *gameMenu = NULL;
+IndoorHandler *gameIndoors = NULL;
+
+bool inMenu = false;
+
+
+std::vector <Coords> mapObjLocations;
+
+
+bool runOnce = false;
+
+Player p1;
+AllMaps fullMaps;
+IndoorPlayer playerAbove;
+PlayerInventory playerStuff;
+
+int main()
+{
+	
+	srand ( time(NULL) );
+	
+	game_graphics = new SDLGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, "Min Wage", 0,90,0);
+	game_timer = new Timer();
+	game_input = new Input();
+	gameMenu = new menuClass();
+	gameIndoors = new IndoorHandler();
+	
+	//There's got to be a better way to do this (generating random tiles for the grass)...
+	//This is probably a better idea: generate the entire backdrop as an SDL_Surface that can be drawn 
+	//														each time it is needed?
+
+	int randTiles[(SCREEN_HEIGHT / 32) * (SCREEN_WIDTH / 32)];
+	int i = 0;
+	for (i = 0; i < (SCREEN_HEIGHT / 32) * (SCREEN_WIDTH / 32); i++)
+	{
+		randTiles[i] = rand() % 4;
+	}
+
+	//makeMap();
+	//loadMapFile("datfile.dat");
+	setupTiles();
+
+	showTitle();
+
+	gameloop(randTiles);
+
+	exitGame();
+
+	return 0;
+}
+
+void gameloop(int randTiles[])
+{
+	float frame = 0.0;
+	int dir = 0;
+	
+	game_input->clearKeys();
+	
+	while (gameIsRunning)
+	{
+		
+		float deltaTime = game_timer->timeSinceLastFrame();
+
+		game_input->readInput();
+
+		if (game_input->windowClosed())
+		{
+			gameIsRunning = false;
+		}
+
+		handleKeyboardInput();
+
+		dir = p1.getDir() * 32;
+
+		if (p1.isWalk())
+		{
+			frame += 0.05;
+			if (frame > 3.0)
+			{
+				frame = 0.0;
+			}
+		}
+		else 
+		{
+			frame = 0.0;
+		}
+		
+
+		game_graphics->beginScene();
+		drawGrass(randTiles);
+
+		drawOverlay();
+		//printf("x: %d y: %d\n", mapObjLocations.at(0).getX(), mapObjLocations.at(0).getY());
+		game_graphics->drawSprite(p1.playerBMP, (int)frame * 32, dir, p1.getX(), p1.getY(), 32, 32);
+
+		//showXY();
+	    
+		game_graphics->endScene();
+
+		if (inMenu)
+		{
+			gameMenu->displayMenu();
+			
+		}
+
+		// Give the computer a break (optional)
+		SDL_Delay(5);
+		
+	}
+}
+
+void exitMessage(std::string exitMsg)
+{
+	std::cout << "Error: " << exitMsg << "\n";
+	exitGame();
+}
+
+
+void exitGame()
+{
+	screenBlackAnim();
+
+	delete game_timer;
+	delete game_input;
+	delete game_graphics;	
+}
+	
+void drawGrass(int randTiles[])
+{
+	/***
+
+	for (int x = 0; x < SCREEN_WIDTH/SPRITE_WIDTH; x++) 
+	{
+		for (int y = 0; y < SCREEN_HEIGHT/SPRITE_HEIGHT; y++) 
+		{
+			//randTile = rand() * 4;
+
+			game_graphics->drawSprite(grassTiles, randTiles[x*y] * 32, 0, x*32, y*32, 32, 32);
+
+			//game_graphics->drawSprite(grassTiles, 2 * 32, 0, x*32, y*32, 32, 32);	
+				//SDL_BlitSurface(grass, NULL, screen, &rcGrass);
+		}
+	}	
+	* 
+	* ****/
+	game_graphics->drawSprite(fullGrass, 0, 0, 0,0, 640, 480);
+	//game_graphics->endScene();
+}
+
+void screenBlackAnim()
+{
+
+	int tileX, tileY;
+	
+	int tileCount = 0;
+	
+	//std::vector <Coords> screenTiles((SCREEN_WIDTH / 32) * (SCREEN_HEIGHT / 32));
+	std::vector <Coords> screenTiles((SCREEN_WIDTH / 8) * (SCREEN_HEIGHT / 8));
+
+
+	//for (int x = 0; x < SCREEN_WIDTH/SPRITE_WIDTH; x++)
+	for (int x = 0; x < SCREEN_WIDTH/8; x++) 
+	{
+		//for (int y = 0; y < SCREEN_HEIGHT/SPRITE_HEIGHT; y++)
+		for (int y = 0; y < SCREEN_HEIGHT/8; y++) 
+		{
+			screenTiles.at(tileCount).setX(x);
+			screenTiles.at(tileCount).setY(y);
+			tileCount++;
+		}
+	}
+
+	std::random_shuffle(screenTiles.begin(), screenTiles.end());
+	
+	for (int count = 0; count < screenTiles.size(); count++)
+	{
+			game_graphics->drawSprite(blackTile, 0, 0, screenTiles.at(count).getX() * 8, screenTiles.at(count).getY() * 8, 8, 8);
+			count++;
+			game_graphics->drawSprite(blackTile, 0, 0, screenTiles.at(count).getX() * 8, screenTiles.at(count).getY() * 8, 8, 8);
+			count++;
+			game_graphics->drawSprite(blackTile, 0, 0, screenTiles.at(count).getX() * 8, screenTiles.at(count).getY() * 8, 8, 8);			
+			game_graphics->endScene();
+			//SDL_Delay(2);
+	}
+	game_graphics->endScene();
+	//SDL_Delay(500);
+	
+}
+
+void drawOverlay()
+{
+	
+	int mapPlace = 0;
+
+	Coords tempCoords, holdDimensions;
+	int spriteCount = 0;
+	int typeHold = 0;
+	
+	//If we have just loaded this map, pull the sprites into memory
+	//Once the sprites are no longer stored as a giant map, this will be simpler
+	if (runOnce == false)
+	{
+		/****
+		for (int y = 0; y < SCREEN_HEIGHT/SPRITE_HEIGHT; y++) 
+		{
+			for (int x = 0; x < SCREEN_WIDTH/SPRITE_WIDTH; x++) 
+			{
+				if (int(fullMaps.gameMaps[p1.getMapY()][p1.getMapX()][mapPlace]) != 0)
+				{
+					
+					//load sprite to list
+					tempCoords.setX(x);
+					tempCoords.setY(y);
+					tempCoords.setObjType(fullMaps.gameMaps[p1.getMapY()][p1.getMapX()][mapPlace]);
+					mapObjLocations.push_back(tempCoords);
+				
+				}
+				mapPlace++;
+			}
+		}****/	
+		loadMapFile("datfile.dat", p1.getMapX(), p1.getMapY());
+		runOnce = true;
+	}
+	
+	for (spriteCount = 0; spriteCount < mapObjLocations.size(); spriteCount++)
+	{
+		typeHold = mapObjLocations.at(spriteCount).getObjType();
+		holdDimensions = getObjDimensions(typeHold);
+		
+		if (typeHold < 90)
+		{
+			game_graphics->drawSprite(getObjSurface(typeHold), 0, 0, mapObjLocations.at(spriteCount).getX() * 32, mapObjLocations.at(spriteCount).getY() * 32, holdDimensions.getX(), holdDimensions.getY());
+		}
+	}
+}
+
+void handleKeyboardInput()
+{
+   bool* keysHeld = game_input->getInput();
+   bool* keysHit = game_input->getSlowInput();
+   
+   int collideHolder = 0;
+
+//   if (keysHeld[SDLK_ESCAPE])
+//   {
+//		inMenu = true;
+//		keysHit[SDLK_ESCAPE] = false;
+ //  }
+
+   if (keysHeld[SDLK_LEFT])
+   {
+	  collideHolder = collideMapObjTest(-1, 0); 
+	  if (!collideHolder)
+      {
+		if (  (p1.getX() - 1) < 0)
+		{
+			if ((p1.getMapX() > 0))
+			{
+				mapChange(-1, 0);
+			}
+		}
+		else
+		{
+			p1.changeX(-1);
+			p1.startWalk();
+		} 
+	  }
+	  else {collidedWith(collideHolder);}
+      p1.setDir(PLAYER_LEFT);
+    }
+	else if (keysHeld[SDLK_RIGHT])
+	{
+	  collideHolder = collideMapObjTest(1, 0);
+      if (!collideHolder)
+      {
+		if ((p1.getX() + 1) > (SCREEN_WIDTH - SPRITE_WIDTH)) //1 is the max map num
+		{
+			if ((p1.getMapX() < (MAPSIZE_X - 1)))
+			{
+				mapChange(1, 0);
+			}
+		}
+		else
+		{
+
+			p1.changeX(1);
+			p1.startWalk(); 
+		}
+      }
+      else {collidedWith(collideHolder);}
+      p1.setDir(PLAYER_RIGHT);
+	}
+	
+	if (keysHeld[SDLK_UP])
+	{
+	  collideHolder = collideMapObjTest(0, -1);	
+      if (!collideHolder)
+      {
+		  
+		if ((p1.getY() - 1) < 0)
+		{
+			if (p1.getMapY() > 0)
+			{
+				mapChange(0, -1);
+			}
+			
+		}
+		else
+		{
+
+			p1.changeY(-1);
+			p1.startWalk(); 
+		}
+	  }
+	  else {collidedWith(collideHolder);}
+      p1.setDir(PLAYER_UP);
+	}
+	else if (keysHeld[SDLK_DOWN])
+	{
+	  collideHolder = collideMapObjTest(0, 1);
+	  if (!collideHolder)
+      {
+		if ((p1.getY() + 1) > (SCREEN_HEIGHT - SPRITE_HEIGHT)) 
+		{
+			if ((p1.getMapY() < (MAPSIZE_Y - 1)))
+			{
+				mapChange(0,1);
+			}
+
+		}
+		else
+		{
+
+			p1.changeY(1);
+			p1.startWalk();
+		}
+	  }
+	  else {collidedWith(collideHolder);}
+      p1.setDir(PLAYER_DOWN); 
+	}
+
+	if (!keysHeld[SDLK_DOWN] && !keysHeld[SDLK_UP] && !keysHeld[SDLK_LEFT] && !keysHeld[SDLK_RIGHT])
+	{
+		p1.stopWalk();
+	}
+	
+	
+	if (keysHit[SDLK_ESCAPE])
+   {
+		inMenu = true;
+		keysHit[SDLK_ESCAPE] = false;
+		keysHeld[SDLK_ESCAPE] = false;
+   }
+
+	if (keysHit[SDLK_b])  //'b' tests fade to black
+	{
+		screenBlackAnim();
+		keysHit[SDLK_b] = false;
+	}
+	if (keysHit[SDLK_v])	//'v' is menu test
+	{
+		inMenu = true;
+		keysHit[SDLK_v] = false;
+	}
+	if (keysHit[SDLK_n])	//'n' is indoors test
+	{
+		gameIndoors->goInside(1);
+		keysHit[SDLK_n] = false;
+	}
+	if (keysHit[SDLK_z])	//'z' is spiral test
+	{
+		drawSpiral(35, 25);
+		keysHit[SDLK_z] = false;
+	}
+	
+
+
+}
+
+void showXY()
+{
+		char xcor[10];
+		char ycor[10];
+		//printf("t1\n");
+		sprintf(xcor, "x: %d", p1.getX());
+		sprintf(ycor, "y: %d", p1.getY());
+		//printf("t2\n");
+		game_graphics->drawText(xcor, 12, 500, 300, 200, 0, 0, 0, 0, 0);
+		game_graphics->drawText(ycor, 12, 500, 320, 200, 0, 0, 0, 0, 0);
+}
+
+//goes through each rock on the screen, checking for player collisions
+int collideMapObjTest(int chX, int chY)
+{
+		int retVal = 0;
+		if (runOnce == true)
+		{
+			for (int mapObjCount = 0; mapObjCount < mapObjLocations.size(); mapObjCount++)
+			{
+				//if(SDL_CollidePixel(playerMask, p1.getX() + chX, p1.getY() + chY, getObjSurfaceMasks(mapObjLocations.at(mapObjCount).getObjType()), mapObjLocations.at(mapObjCount).getX() * 32, mapObjLocations.at(mapObjCount).getY() * 32))
+				if(SDL_CollidePixel(playerMask, p1.getX() + chX, p1.getY() + chY, getObjSurface(mapObjLocations.at(mapObjCount).getObjType()), mapObjLocations.at(mapObjCount).getX() * 32, mapObjLocations.at(mapObjCount).getY() * 32))
+				{
+						
+						retVal = mapObjLocations.at(mapObjCount).getObjType();
+						
+				}
+				
+			}
+		}
+	
+		return retVal;
+}
+
+
+//resets things for map change, one map at a time
+//ie mapChange(0,1) -> adds 1 to y OR mapChange(-1,0) -> adds 1 to y
+//the change can be done in leaps greater than one map screen
+//...but probably not needed
+void mapChange(int chx, int chy)
+{
+	if (chx == 0)
+	{
+		if (chy > 0)
+			{
+				p1.setY(0);
+				
+			}
+		else if (chy < 0)
+			{
+				p1.setY(SCREEN_HEIGHT - SPRITE_HEIGHT);
+			}
+		p1.changeMapY(chy);
+	}
+	else if (chy == 0)
+	{
+		if (chx > 0)
+			{
+				p1.setX(0);
+			}
+		else if (chx < 0)
+			{
+				p1.setX(SCREEN_WIDTH - SPRITE_WIDTH);
+			}
+		p1.changeMapX(chx);		
+	}
+	runOnce = false;
+	mapObjLocations.clear();
+}
+
+void showTitle()
+{
+	SDL_Surface *titleImage = IMG_Load("images/title.png");
+	game_graphics->drawSprite(titleImage, 0, 0, 0,0, 640, 480);
+	game_graphics->endScene();
+	SDL_Delay(1000);
+	game_input->clearKeys();
+	
+}
+
+int collidedWith(int collideItem)
+{
+		printf("You collided with: %d\n", collideItem);
+		if (collideItem == 91)
+			{	
+				drawSpiral(75, 5);
+				gameIndoors->goInside(0);
+			}
+		else if (collideItem == 92)
+			{
+				drawSpiral(75, 5);
+				gameIndoors->goInside(1);				
+			}
+		return 0;
+}
+
+
+

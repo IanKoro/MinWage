@@ -1,0 +1,92 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstring>
+
+
+struct SpriteObj
+{
+  int isWall;
+  //char isWall;
+  char xpos;
+  char ypos;
+  char thing_num;
+
+};
+
+int main()
+{
+
+  SpriteObj spr1;
+
+  spr1.isWall = 1;
+  spr1.xpos = 12;
+  spr1.ypos = 22;
+  spr1.thing_num = 132;
+
+
+  SpriteObj spr2;
+
+  spr2.isWall = 0;
+  spr2.xpos = 65;
+  spr2.ypos = 4;
+  spr2.thing_num = 88;
+
+
+  std::string filename = "datfile.dat";
+
+  std::ofstream datfile;
+  //int fileMapPosition = 0;
+  datfile.open(filename.c_str(), std::ios::binary);
+  //  datfile.seekg(0, datfile.end);
+  //int filelength = datfile.tellg();
+
+  //datfile.seekg(fileMapPosition, datfile.beg);
+  
+  // char *data = new char[300];
+ 
+  //int strSize = sizeof(spr1);
+
+  datfile.write((char *)&spr1, sizeof(spr1));
+  datfile.write((char *)&spr2, sizeof(spr2));
+  datfile.close();
+
+  SpriteObj sprIn[2];
+
+  std::ifstream datfileIn;
+  datfileIn.open(filename.c_str(), std::ios::binary);
+  datfileIn.read((char *)&sprIn, sizeof(sprIn));
+  datfileIn.close();
+
+  std::cout << "Sprite 1 Data\n\nIsWall: ";
+  if (spr1.isWall == 0) {std::cout << "Yes";}
+  else if (spr1.isWall == 1) {std::cout << "No";}
+  std::cout << "\n";
+  std::cout << "X: " << (int)spr1.xpos << "\nY: " << (int)spr1.ypos << "\nID Num: " << (int)spr1.thing_num << std::endl;
+
+  std::cout << "Sprite 2 Data\n\nIsWall: ";
+  if (spr2.isWall == 0) {std::cout << "Yes";}
+  else if (spr2.isWall == 1) {std::cout << "No";}
+  std::cout << "\n";
+  std::cout << "X: " << (int)spr2.xpos << "\nY: " << (int)spr2.ypos << "\nID Num: " << (int)spr2.thing_num << std::endl;
+
+
+
+  std::cout << "Sprite 1 Data From File\n\nIsWall: ";
+  if (sprIn[0].isWall == 0) {std::cout << "Yes";}
+  else if (sprIn[0].isWall == 1) {std::cout << "No";}
+  std::cout << "\n";
+  std::cout << "X: " << (unsigned int)sprIn[0].xpos << "\nY: " << (unsigned int)sprIn[0].ypos << "\nID Num: " << (unsigned int)sprIn[0].thing_num << std::endl;
+
+
+
+  std::cout << "Sprite 2 Data From File\n\nIsWall: ";
+  if (sprIn[1].isWall == 0) {std::cout << "Yes";}
+  else if (sprIn[1].isWall == 1) {std::cout << "No";}
+  std::cout << "\n";
+  std::cout << "X: " << (unsigned int)sprIn[1].xpos << "\nY: " << (unsigned int)sprIn[1].ypos << "\nID Num: " << (unsigned int)sprIn[1].thing_num << std::endl;
+
+
+  return 0;
+}
+

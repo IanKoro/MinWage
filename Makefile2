@@ -1,0 +1,9 @@
+minwage:	main.cpp SDL_collide.cpp maps.cpp indoors.cpp inventory.cpp
+	g++ `sdl-config --cflags --libs` -lSDL_image -lSDL_ttf -g SDL_collide.cpp maps.cpp indoors.cpp inventory.cpp indoorPlayer.cpp SDLGraphics.cpp menuclass.cpp Input.cpp Timer.cpp mapobjs.cpp gameobjs.cpp makeMap.cpp main.cpp -o minwage
+
+debug:	main.cpp
+	g++ `sdl-config --cflags --libs` -lSDL_image -lSDL_ttf -g SDL_collide.cpp maps.cpp indoors.cpp inventory.cpp indoorPlayer.cpp SDLGraphics.cpp menuclass.cpp Input.cpp Timer.cpp mapobjs.cpp gameobjs.cpp main.cpp -o minwage
+
+
+clean:
+	rm minwage

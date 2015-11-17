@@ -3,9 +3,9 @@
 #include "gameobjs.h"
 
 
-SDL_Surface* getIndoorObjSurface(int objType);
+//SDL_Surface* getIndoorObjSurface(int objType);
 Coords getIndoorObjDimensions(int objType);
-
+int getIndoorFloor(int roomNum);
 
 class IndoorHandler
 {
@@ -19,10 +19,21 @@ class IndoorHandler
 			void goInside(int roomNumber);
 			void goOutside();
 			
-			void indoorInput();		
+			//void indoorInput();		
+			
+			SDL_Surface* getIndoorObjSurface(int objType);
+			
+			int collideObjTest(int chX, int chY);
+			int collideWith(int collideItem);
+			//Coords getIndoorObjDimensions(int objType);
+			//int getIndoorFloor(int roomNum);
 			
 		private:
 			bool isIndoors;
+			bool firstLoad;
+			
+			
+			std::vector <Coords> indoorObjLocations;
 			
 };
 

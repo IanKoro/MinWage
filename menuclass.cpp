@@ -1,6 +1,6 @@
 #include <iostream>
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 #include <string>
 #include <vector>
 
@@ -65,7 +65,7 @@ menuClass::menuClass()
 
 		tempItem.caption = "Stats";
 		tempItem.x_coord = 75;
-		tempItem.y_coord = 114;
+		tempItem.y_coord = 124;
 		
 		tempItem.tR = 250;
 
@@ -74,7 +74,7 @@ menuClass::menuClass()
 
 		tempItem.caption = "Cell Phone";
 		tempItem.x_coord = 75;
-		tempItem.y_coord = 144;
+		tempItem.y_coord = 164;
 		
 		tempItem.tR = 250;
 
@@ -83,7 +83,7 @@ menuClass::menuClass()
 
 		tempItem.caption = "Save Game";
 		tempItem.x_coord = 75;
-		tempItem.y_coord = 320;
+		tempItem.y_coord = 244;
 		
 		tempItem.tR = 250;
 
@@ -91,7 +91,7 @@ menuClass::menuClass()
 		
 		tempItem.caption = "Load Game";
 		tempItem.x_coord = 75;
-		tempItem.y_coord = 350;
+		tempItem.y_coord = 284;
 		
 		tempItem.tR = 250;
 
@@ -99,7 +99,7 @@ menuClass::menuClass()
 
 		tempItem.caption = "Quit";
 		tempItem.x_coord = 75;
-		tempItem.y_coord = 380;
+		tempItem.y_coord = 324;
 		
 		tempItem.tR = 250;
 
@@ -107,7 +107,7 @@ menuClass::menuClass()
 		
 		tempItem.caption = "Back to game";
 		tempItem.x_coord = 75;
-		tempItem.y_coord = 410;
+		tempItem.y_coord = 364;
 		
 		tempItem.tR = 250;
 
@@ -128,6 +128,17 @@ void menuClass::displayMenu()
 	
 	int menuPos = 0;
 
+
+	//fill black background
+	for (int yPlace = 1; yPlace < 14; yPlace++)
+	{
+		for (int xPlace = 1; xPlace < 19; xPlace++)
+		{
+			game_graphics->drawSprite(blackTile, 0, 0, xPlace * 32, yPlace * 32,32,32);
+		}
+	}
+				
+				
 	drawBorder(18, 13);
 
 	while (inMenu)
@@ -160,19 +171,20 @@ void menuClass::drawMenuItems(int selectedItem)
 	int itemCount = 0;
 		
 		
-	game_graphics->drawText("Game Menu", 30, 245, 40 ,250,75,0,0,0,0);
+	game_graphics->drawText("Game Menu", 40, 245, 40 ,250,75,0,0,0,0);
 	for (itemCount = 0; itemCount < menuItemList.size(); itemCount++)
 	{
 		if (selectedItem == itemCount)
 		{
-			game_graphics->drawSprite(menuDot, 0, 0,menuItemList.at(itemCount).x_coord - 32,menuItemList.at(itemCount).y_coord + 5,18,18);
+			game_graphics->drawSprite(menuDot, 0, 0,menuItemList.at(itemCount).x_coord - 32,menuItemList.at(itemCount).y_coord + 15,18,18);
 		}
 		else
 		{
-			game_graphics->drawSprite(blackTile, 0, 0,menuItemList.at(itemCount).x_coord - 32,menuItemList.at(itemCount).y_coord + 5,18,18);
+			game_graphics->drawSprite(blackTile, 0, 0,menuItemList.at(itemCount).x_coord - 32,menuItemList.at(itemCount).y_coord + 15,18,18);
 		}
-		game_graphics->drawText(menuItemList.at(itemCount).caption.c_str(), 24, menuItemList.at(itemCount).x_coord, menuItemList.at(itemCount).y_coord, menuItemList.at(itemCount).tR, menuItemList.at(itemCount).tG, menuItemList.at(itemCount).tB, menuItemList.at(itemCount).bR, menuItemList.at(itemCount).bG, menuItemList.at(itemCount).bB);
+		game_graphics->drawText(menuItemList.at(itemCount).caption.c_str(), 34, menuItemList.at(itemCount).x_coord, menuItemList.at(itemCount).y_coord, menuItemList.at(itemCount).tR, menuItemList.at(itemCount).tG, menuItemList.at(itemCount).tB, menuItemList.at(itemCount).bR, menuItemList.at(itemCount).bG, menuItemList.at(itemCount).bB);
 	}
+	
 }
 
 void menuClass::doMenuItem(int menuSel)
@@ -225,7 +237,7 @@ int menuClass::menuState()
 
 	if (keysHeld[SDLK_ESCAPE])
 	{
-		inMenu = false;
+		//inMenu = false;
 		keysHeld[SDLK_ESCAPE] = false;
 	}
 

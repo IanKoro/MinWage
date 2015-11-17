@@ -1,0 +1,16 @@
+#include <iostream>
+
+
+using namespace std;
+
+int main()
+{
+
+  // char x[5] = {125, 126, 127, 128, 129};
+  
+  char a = 123;
+
+  cout << hex << (unsigned int)a << endl;
+
+  return 0;
+}

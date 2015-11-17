@@ -1,8 +1,8 @@
 #ifndef GAMEOBJS_H
 #define GAMEOBJS_H
 
-#include <SDL.h>
-#include <SDL_ttf.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
 #include <vector>
 
 #define SPRITE_WIDTH   32
@@ -37,7 +37,10 @@ class Player
 		
 		int getXvel() {return xvel;}
 		int getYvel() {return yvel;}
-		
+
+		void setXvel(int xvval) {xvel = xvval;}
+		void setYvel(int yvval) {yvel = yvval;}
+				
 		void throttleX(int xch) {xvel += xch;}
 		void throttleY(int ych) {yvel += ych;}
 
@@ -60,8 +63,7 @@ class Player
 		void zeroX() {xvel = 0;}
 		void zeroY() {yvel = 0;}
 
-		void setXvel(int xvval) {xvel = xvval;}
-		void setYvel(int yvval) {yvel = yvval;}
+
 	
 		void startWalk() {walking = true;}
 		void stopWalk() {walking = false;}
@@ -70,6 +72,8 @@ class Player
 		
 		void setDir(int dir) {direction = dir;}
 		int getDir() {return direction;}
+		
+		void moveChar();
 		
 	private:
 		int x;
@@ -90,6 +94,8 @@ class Player
 class Coords
 {
 	public:
+		//Coords() {isWall = false;}
+		//~Coords();
 		void setX(int xval) {x = xval;}
 		void setY(int yval) {y = yval;}
 
@@ -98,6 +104,8 @@ class Coords
 		
 		void setObjType(int objVal) {objType = objVal;}
 		int getObjType() {return objType;}
+		
+		bool isWall;
 		
 
 		
@@ -108,6 +116,31 @@ class Coords
 		int objType;
 };
 
+class GameObject
+{
+	public:
+		//GameObject();
+		//~GameObject();
+		
+		void set_sprite(SDL_Surface *sprData);
+		void set_spriteMask(SDL_Surface *sprmskData) {spriteMaskData = sprmskData;}		
+		
+		SDL_Surface* get_sprite() {return spriteData;}
+		SDL_Surface* get_spriteMask() {return spriteMaskData;}
+		
+		
+		void setDimensions(int width, int height) {objDimensions.setX(width); objDimensions.setY(height);}
+		Coords getDimensions() {return objDimensions;}
+		void setDimensions(Coords setDim) {objDimensions = setDim;}
+		
+		void clear() {spriteData = NULL; spriteMaskData = NULL;}
+		
+	private:
+		Coords objDimensions;
+		
+		SDL_Surface *spriteData;
+		SDL_Surface *spriteMaskData;
+};
 
 Coords getObjDimensions(int objType);
 

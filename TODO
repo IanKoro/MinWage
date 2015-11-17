@@ -1,6 +1,22 @@
    	June 11-2015
 	-===========-
 
+
+Work on:
+
+-handleKeyboardInput() in main.cpp needs a complete rewrite: switch to 
+a velocity based system, and get the collision handling in a more 
+appropriate location
+
+-Replace sprite/object organization. Have a class for each game object
+containing sprite data and dimension data
+
+-Inventory/stats: fill those out (inventory.cpp)
+-NPCs/Dialogue (characters.cpp)
+
+-screenBlackAnim() and drawSpiral() should be in the same place, either
+add such effects to the SDLGraphics class, or create a new effects class
+
 -Rewrite grass drawing routine: probably want to have the entire set of 
 	grass drawn to one SDL_Surface, so we're not generating everything 
 	at once?
@@ -37,9 +53,17 @@ Sprites:
 
 
 Indoors:
-	-map system is close to being done. Need to implement a system for 
-		indoor doorways (going between rooms), and outdoor ones
-		(for entering the indoors)
+	-Maps need rewrite - xfer map data to .dat files like outdoor maps
+		-outdoor code reuse?
+	-indoor collision: essentially works. We need to consider a way 
+	to differentiate between sprites that block your path, and those 
+	that do not. 
+	
+		Perhaps split the drawing of the sprites in two. Those below a
+	certain number get drawn before the player, the others after.
+	
+	
+	-add floor chooser
 	-create maps for locations
 	
 -outdoor maps are now functional, so to expand it is time to create both art
@@ -54,7 +78,7 @@ Indoors:
 		
 LOCATIONS:
 		-home (apartment... with the possibility of up/downgrading?, a house, a cardboard box)
-		-bar
+		-bar	
 		-jobs (fast food, telemarketing, etc...)
 		-groceries
 		-drug dealers

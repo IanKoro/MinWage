@@ -1,0 +1,30 @@
+Map data file format:
+
+Header Opening (First 4 bytes):
+0xD0 0xCE 0xD1 0xBA
+
+     Listing of header data (more should be possible to add):
+
+     	     # of maps X: 1 byte
+	     # of maps Y: 1 byte
+	     
+	     
+	     
+
+Header Closing (4B):
+       0xDF 0xC3 0xF8 0xDF
+
+Data section:
+
+Start of each map data header (4B):
+      0x80 0x81 0x82 0x83
+
+
+     char - item #	  
+     char - x
+     char - y
+     isWall
+
+
+
+8A 8B 8C 8D

@@ -5,21 +5,33 @@
 
 class Timer
 {
-// Methods
-public:
-   Timer();
-   ~Timer();
+    private:
+    //The clock time when the timer started
+    int startTicks;
 
-   // This returns the number of milliseconds since this object was created.
-   float timeSinceCreation();
+    //The ticks stored when the timer was paused
+    int pausedTicks;
 
-   // This method returns the number of milliseconds that have passed since it was last called.
-   float timeSinceLastFrame();
+    //The timer status
+    bool paused;
+    bool started;
 
-// Data
-private:
-   // This stores the time of that last call to timeSinceLastFrame().
-   float m_timeOfLastCall;
+    public:
+    //Initializes variables
+    Timer();
+
+    //The various clock actions
+    void start();
+    void stop();
+    void pause();
+    void unpause();
+
+    //Gets the timer's time
+    int get_ticks();
+
+    //Checks the status of the timer
+    bool is_started();
+    bool is_paused();
 };
 
 #endif

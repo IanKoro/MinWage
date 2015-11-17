@@ -1,0 +1,3 @@
+//Start of Map X: 5 Y: 2
+//No. sprites7
+
